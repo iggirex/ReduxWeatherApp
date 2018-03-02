@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
-import promiseMiddleware from 'redux-promise';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { fetchWeather } from '../actions/index'
 
-export default class SearchBar extends Component {
+class SearchBar extends Component {
     constructor(props) {
         super(props);
 
         this.state = { term: "" };
 
-        this.onInputChange = this.onInputChange.bind(this)
+        this.onInputChange = this.onInputChange.bind(this);
+        this.onFormSubmit = this.onFormSubmit.bind(this);
     }
 
+    // When we use "this" in a callback function, "this" will have
+    // the incorrect context. ---> so we bind "this"
     onInputChange(event) {
         console.log(event.target.value);
         this.setState({term: event.target.value})
@@ -17,6 +22,11 @@ export default class SearchBar extends Component {
 
     onFormSubmit(event) {
         event.preventDefault();
+
+        // fetchWeather is available from mapDispatchToProps at bottom of file
+        this.props.fetchWeather(this.state.term);
+        // clear input after its submitted:
+        this.setState({ term: "" });
     }
 
     render() {
@@ -35,3 +45,11 @@ export default class SearchBar extends Component {
         )
     }
 }
+
+function mapDispatchToProps(dispatch) {
+    // this bindActionCreaters will give this component access to this.props.fetchWeather!!!
+    return bindActionCreators({ fetchWeather }, dispatch);
+}
+
+// first argument expected to be mapPropsToState, so in this case we put in null
+export default connect(null, mapDispatchToProps)(SearchBar);
