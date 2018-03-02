@@ -11,8 +11,9 @@ export default function(state = [], action) {
 
         // concat will return a brand new array, not a mutated old one: 
         // return state.concat([ action.payload.data ]);   SAME AS:
-
-        return [ action.payload.data, ...state ];
+        if(action.payload.data != null) {
+            return [ action.payload.data, ...state ];
+        }
     }
     return state;
 }
